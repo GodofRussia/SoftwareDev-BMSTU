@@ -35,10 +35,11 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
     }
 
     private String pin;
+    ActivityResultLauncher activityResultLauncher;
 
     @Override
     public String enterPin(int ptc, String amount) {
-        pin = new String();
+        pin = "";
         Intent it = new Intent(MainActivity.this, PinpadActivity.class);
         it.putExtra("ptc", ptc);
         it.putExtra("amount", amount);
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
             try {
                 MainActivity.this.wait();
             } catch (Exception ex) {
-                System.out.println("ERROR");
+                System.out.println(ex.getMessage());
             }
         }
         return pin;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
             try {
                 HttpURLConnection uc = (HttpURLConnection)
                         (new URL("https://www.wikipedia.org").openConnection());
+//                        (new URL("http://109.252.153.73:8080/api/v1/title").openConnection());
                 InputStream inputStream = uc.getInputStream();
                 String html = IOUtils.toString(inputStream);
                 String title = getPageTitle(html);
@@ -93,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
     }
 
     private ActivityMainBinding binding;
-    ActivityResultLauncher activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,13 +106,11 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
                 new ActivityResultCallback() {
                     @Override
                     public void onActivityResult(Object result) {
-                        ActivityResult res = (ActivityResult) result;
-                        if (res.getResultCode() == Activity.RESULT_OK) {
-                            Intent data = res.getData();
+                        if (((ActivityResult) result).getResultCode() == Activity.RESULT_OK) {
+                            Intent data = ((ActivityResult) result).getData();
                             // обработка результата
                             // String pin = data.getStringExtra("pin");
                             // Toast.makeText(MainActivity.this, pin, Toast.LENGTH_SHORT).show();
-                            assert data != null;
                             pin = data.getStringExtra("pin");
                             synchronized (MainActivity.this) {
                                 MainActivity.this.notifyAll();
@@ -123,8 +122,9 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
 
     public void onButtonClick(View v)
     {
-        byte[] trd = stringToHex("9F0206000000000100");
-        transaction(trd);
+        testHttpClient();
+//        byte[] trd = stringToHex("9F0206000000000100");
+//        transaction(trd);
     }
 
     public static byte[] stringToHex(String s)

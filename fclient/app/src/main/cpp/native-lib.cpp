@@ -158,6 +158,7 @@ Java_ru_iu3_fclient_MainActivity_transaction(JNIEnv *xenv, jobject xthiz, jbyteA
         jmethodID id = env->GetMethodID(
                 cls, "enterPin", "(ILjava/lang/String;)Ljava/lang/String;");
 
+        //TRD 9F0206000000000100 = amount = 1р
         uint8_t* p = (uint8_t*)env->GetByteArrayElements (trd, 0);
         jsize sz = env->GetArrayLength (trd);
         if ((sz != 9) || (p[0] != 0x9F) || (p[1] != 0x02) || (p[2] != 0x06))
