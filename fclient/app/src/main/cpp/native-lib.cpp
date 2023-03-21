@@ -173,7 +173,6 @@ Java_ru_iu3_fclient_MainActivity_transaction(JNIEnv *xenv, jobject xthiz, jbyteA
         jstring jamount = (jstring) env->NewStringUTF(buf);
         int ptc = 3;
         while (ptc > 0) {
-
             jstring pin = (jstring) env->CallObjectMethod(thiz, id, ptc, jamount);
             const char * utf = env->GetStringUTFChars(pin, nullptr);
             env->ReleaseStringUTFChars(pin, utf);

@@ -103,11 +103,11 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
 
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback() {
+                new ActivityResultCallback<ActivityResult>() {
                     @Override
-                    public void onActivityResult(Object result) {
-                        if (((ActivityResult) result).getResultCode() == Activity.RESULT_OK) {
-                            Intent data = ((ActivityResult) result).getData();
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
                             // обработка результата
                             // String pin = data.getStringExtra("pin");
                             // Toast.makeText(MainActivity.this, pin, Toast.LENGTH_SHORT).show();
@@ -122,9 +122,15 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
 
     public void onButtonClick(View v)
     {
-        testHttpClient();
-//        byte[] trd = stringToHex("9F0206000000000100");
-//        transaction(trd);
+        new Thread(() -> {
+            try {
+                byte[] trd = stringToHex("9F0206000000000100");
+                boolean ok = transaction(trd);
+            } catch (Exception ex) {
+
+            }
+    }).start();
+//        testHttpClient();
     }
 
     public static byte[] stringToHex(String s)
