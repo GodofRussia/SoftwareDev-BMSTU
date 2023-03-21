@@ -118,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements TransactionEvents
                         }
                     }
                 });
+        int res =initRng();
+        byte[] v = randomBytes(10);
     }
 
     public void onButtonClick(View v)
