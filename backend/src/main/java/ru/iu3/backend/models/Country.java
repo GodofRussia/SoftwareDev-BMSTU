@@ -1,10 +1,11 @@
 package ru.iu3.backend.models;
 
-import javax.persistence.*;
+//import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Table(name = "countries")
 @Access(AccessType.FIELD)
-@javax.persistence.Entity
+@Entity
 public class Country {
 
     public Country() { }
