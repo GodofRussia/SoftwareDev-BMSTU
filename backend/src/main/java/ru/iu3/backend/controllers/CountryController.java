@@ -33,10 +33,10 @@ public class CountryController {
         }
         catch(Exception ex) {
             String error;
-            if (ex.getMessage().contains("countries.name_UNIQUE"))
-                error = "countyalreadyexists";
+            if (ex.getMessage().contains("constraint [countries.name]"))
+                error = "County already exists";
             else
-                error = "undefinederror";
+                error = "Undefined error";
             Map<String, String>
                     map =  new HashMap<>();
             map.put("error", error);
@@ -56,16 +56,14 @@ public class CountryController {
             countryRepository.save(country);
             return ResponseEntity.ok(country);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "country not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Country not found");
         }
     }
 
     @DeleteMapping("/countries/{id}")
     public ResponseEntity<Object> deleteCountry(@PathVariable(value = "id") Long countryId) {
-        Optional<Country>
-                country = countryRepository.findById(countryId);
-        Map<String, Boolean>
-                resp = new HashMap<>();
+        Optional<Country> country = countryRepository.findById(countryId);
+        Map<String, Boolean> resp = new HashMap<>();
         if (country.isPresent()) {
             countryRepository.delete(country.get());
             resp.put("deleted", Boolean.TRUE);
