@@ -1,16 +1,19 @@
 package ru.iu3.backend.controllers;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.iu3.backend.models.User;
+import ru.iu3.backend.models.UserWithCredentials;
 import ru.iu3.backend.repositories.UserRepository;
 import ru.iu3.backend.tools.Utils;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,23 +25,38 @@ public class LoginController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Object> login(@RequestBody Map<String, String> credentials) throws JsonProcessingException {
         String login = credentials.get("login");
         String pwd = credentials.get("password");
         if (!pwd.isEmpty() && !login.isEmpty()) {
             Optional<User> uu = userRepository.findByLogin(login);
-            System.out.println(uu.get());
             if (uu.isPresent()) {
                 User u2 = uu.get();
                 String hash1 = u2.password;
                 String salt = u2.salt;
                 String hash2 = Utils.ComputeHash(pwd, salt);
-                System.out.println(hash2);
                 if (hash1.equalsIgnoreCase(hash2)) {
                     u2.token = UUID.randomUUID().toString();
+                    u2.activity = LocalDateTime.now();
                     User u3 = userRepository.saveAndFlush(u2);
-                    return new ResponseEntity<Object>(u3, HttpStatus.OK);
+                    UserWithCredentials userWithCredentials = new UserWithCredentials(u3);
+                    return new ResponseEntity<Object>(userWithCredentials, HttpStatus.OK);
                 }
+            }
+        }
+        return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Object> logout(@RequestHeader(value = "Authorization", required = false) String token) {
+        if (token != null && !token.isEmpty()) {
+            token = StringUtils.removeStart(token, "Bearer").trim();
+            Optional<User> uu = userRepository.findByToken(token);
+            if (uu.isPresent()) {
+                User u = uu.get();
+                u.token = null;
+                userRepository.save(u);
+                return new ResponseEntity<Object>(HttpStatus.OK);
             }
         }
         return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);

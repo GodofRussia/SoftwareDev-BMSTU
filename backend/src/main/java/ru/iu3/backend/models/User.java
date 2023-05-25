@@ -35,9 +35,11 @@ public class User {
     @Column(name = "salt")
     public String salt;
 
+    @JsonIgnore
     @Column(name = "token")
     public String token;
 
+    @JsonIgnore
     @Column(name = "activity")
     public LocalDateTime activity;
 

@@ -5,10 +5,9 @@ import java.security.MessageDigest;
 
 public class Utils {
 
-    public static String ComputeHash(String pwd, String salt)
-    {
+    public static String ComputeHash(String pwd, String salt) {
         MessageDigest digest;
-        byte[] w = Hex.decode(new String(Hex.encode(pwd.getBytes())) + salt);
+        byte[] w = Hex.decode(new String(Hex.encode(pwd.getBytes())) + new String(Hex.encode(salt.getBytes())));
         try {
             digest = MessageDigest.getInstance("SHA-256");
         }
