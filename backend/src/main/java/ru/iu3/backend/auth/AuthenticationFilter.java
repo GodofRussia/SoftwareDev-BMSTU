@@ -14,6 +14,9 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import jakarta.servlet.FilterChain;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Objects;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
@@ -28,10 +31,16 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
     public Authentication attemptAuthentication(HttpServletRequest httpServletRequest,
                                                 HttpServletResponse httpServletResponse) throws AuthenticationException, IOException, ServletException {
         String token= httpServletRequest.getHeader(AUTHORIZATION);
+        String method= httpServletRequest.getMethod();
         if (token != null) {
             token = StringUtils.removeStart(token, "Bearer").trim();
         }
-        Authentication requestAuthentication = new UsernamePasswordAuthenticationToken(token, token);
+        Authentication requestAuthentication;
+        if (Objects.equals(method, "OPTIONS")) {
+            requestAuthentication = new UsernamePasswordAuthenticationToken("options", "options");
+        } else {
+            requestAuthentication = new UsernamePasswordAuthenticationToken(token, token);
+        }
         return getAuthenticationManager().authenticate(requestAuthentication);
     }
 

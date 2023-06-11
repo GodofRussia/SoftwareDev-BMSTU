@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons'
+import Alert from "./Alert";
 import BackendService from "../services/BackendService";
 import { useNavigate } from 'react-router-dom';
-import Alert from "./Alert";
 import PaginationComponent from './PaginationComponent';
 
 const MuseumListComponent = props => {
@@ -41,7 +42,9 @@ const MuseumListComponent = props => {
         const isChecked = e.target.checked;
         setChecked(isChecked);
     }
-
+    const updateMuseumClicked = id => {
+        navigate(`/museums/${id}`)
+    }
     const deleteMuseumsClicked = () => {
         let x = [];
         museums.map((t, idx) => {
@@ -152,7 +155,7 @@ const MuseumListComponent = props => {
                                         <div className="btn-group  ms-auto">
                                             <button className="btn btn-outline-secondary btn-sm btn-toolbar"
                                                     onClick={() =>
-                                                        updateCountryClicked(museum.id)}>
+                                                        updateMuseumClicked(museum.id)}>
                                                 <FontAwesomeIcon icon={faEdit} fixedWidth />
                                             </button>
                                         </div>

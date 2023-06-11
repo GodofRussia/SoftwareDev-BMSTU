@@ -1,94 +1,104 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useId, useState} from "react";
 import BackendService from "../services/BackendService";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import{faChevronLeft, faSave} from "@fortawesome/free-solid-svg-icons";
 import {Form} from "react-bootstrap";
 import { useParams, useNavigate } from 'react-router-dom';
+import {connect, useDispatch} from "react-redux";
+import {alertActions} from "../utils/Rdx";
+
 
 const PaintingComponent = props => {
 
+    const [Name, setName] = useState([]);
     const [hidden, setHidden] = useState(false);
     const navigate = useNavigate();
-    const [name, setName] = useState("")
+    const dispatch = useDispatch();
+    const nameId = useId();
+    const params = useParams();
+    const [Year, setYear] = useState("")
     const [id, setId] = useState(useParams().id)
 
-    const updateName = (event) => {
-        setName(event.target.value)
-    }
-
-    const refreshPainting = () => {
-        BackendService.retrievePainting(id)
+    const loadCountry = () => {
+        if (params.id === String(-1)) {
+            params.id = (Math.floor(Math.random() * 91) + 10);
+        }
+        BackendService.retrievePainting(params.id)
             .then(
                 resp => {
                     setName(resp.data.name);
-                    setHidden(false);
-                }
-            )
-            .catch(()=> {
-                setHidden(true);
-            });
+                    setHidden(false )
+                })
+            .catch(()=> { setHidden(true )})
     }
 
     useEffect(() => {
-        refreshPainting();
-    });
-
-    const onSubmit = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        let err = null;
-        if (name === ""){
-            err = "Название картины должно быть указано"
+        if (parseInt(params.id) != -1) {
+            loadCountry();
         }
-        let painting = {name: name, id: id}
-        if (parseInt(id) === -1) {
-            BackendService.createPainting(painting)
-                .catch(()=>{})
+    }, [])
+
+    const onSubmit = e => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const formJson = Object.fromEntries(formData.entries());
+        let err = null;
+        if (!formJson.name) {
+            err = "Название картины должно быть указано";
+        }
+        if (err) {
+            dispatch(alertActions.error(err))
+        }
+        let painting = { id: params.id, name: formJson.name, artist: {id: formJson.artist}};
+        if (parseInt(painting.id) === -1) {
+            BackendService.createPainting(country)
+                .then(()=> navigate("/museums"))
+                .catch(()=> {})
         }
         else {
-            BackendService.updatePainting(painting)
+            BackendService.updatePainting(country)
+                .then(()=> navigate("/museums"))
                 .catch(()=>{})
         }
-        navigateToPaintings()
-    }
-
-    const navigateToPaintings= () => {
-        navigate('/paintings')
     }
 
     if (hidden)
         return null;
     return (
-        <div className="m-4">
-            <div className="row my-2 mr-0">
-                <h3>Страна</h3>
-                <button
-                    className="btn btn-outline-secondary ml-auto"
-                    onClick={()=>  navigateToPaintings() }><FontAwesomeIcon
-                    icon={faChevronLeft}/>{' '}Назад</button>
+        <div className="container">
+            <div className="row">
+                <div className="col-md-6">
+                    <h3>Страна</h3>
+                </div>
+                <div className="col-md-6 clearfix">
+                    <button className="btn btn-outline-secondary float-end"
+                            onClick={ () => { navigate(-1) } }>
+                        <FontAwesomeIcon icon={faChevronLeft}/>{' '}Назад</button>
+                </div>
             </div>
-            <Form onSubmit={onSubmit}>
-                <Form.Group>
-                    <Form.Label>Название</Form.Label>
-
-
-                    <Form.Control
-                        type="text"
-                        placeholder="Введите название картины"
-                        onChange={updateName}
-                        value={name}
-                        name="name"
-                        autoComplete="off"/>
-                </Form.Group>
-
-                <button
-                    className="btn btn-outline-secondary"
-                    type="submit"><FontAwesomeIcon
-                    icon={faSave}/>{' '}Сохранить</button>
-            </Form>
+            <div className="row">
+                <div className="col-md-12">
+                    <form method="post" onSubmit={onSubmit}>
+                        <label className="form-label" htmlFor={nameId}>Название:</label>
+                        <input id={nameId} name="name"
+                               className="form-control"
+                               defaultValue={Name}
+                               autoComplete="off"/>
+                        <label className="form-label">Год:</label>
+                        <input name="year"
+                               className="form-control"
+                               defaultValue={Year}
+                               autoComplete="off"/>
+                        <button
+                            className="btn btn-outline-secondary mt-4"
+                            type="submit">
+                            <FontAwesomeIcon icon={faSave}/>{' '}Сохранить</button>
+                    </form>
+                </div>
+            </div>
         </div>
     )
-
 }
 
-export default PaintingComponent;
+export default connect()(PaintingComponent);

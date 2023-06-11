@@ -1,6 +1,10 @@
 package ru.iu3.backend.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +17,14 @@ import ru.iu3.backend.repositories.ArtistRepository;
 import ru.iu3.backend.repositories.CountryRepository;
 import ru.iu3.backend.repositories.MuseumRepository;
 import ru.iu3.backend.repositories.PaintingRepository;
+import ru.iu3.backend.tools.DataValidationException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1")
 public class PaintingController {
@@ -31,8 +37,21 @@ public class PaintingController {
     MuseumRepository museumRepository;
 
     @GetMapping("/paintings")
-    public List getAllPaintings() {
-        return paintingRepository.findAll();
+    public Page<Painting> getAllPaintings(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        return paintingRepository.findAll(PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name")));
+    }
+
+    @GetMapping("/paintings/{id}")
+    public ResponseEntity<Painting> getPainting(@PathVariable(value = "id") Long paintingId) throws DataValidationException {
+        Painting painting = paintingRepository.findById(paintingId)
+                .orElseThrow(()-> new DataValidationException("Картина с таким индексом не найдена"));
+        return ResponseEntity.ok(painting);
+    }
+
+    @PostMapping("/deletepaintings")
+    public ResponseEntity deletePaintings(@Valid @RequestBody List<Painting> paintings) {
+        paintingRepository.deleteAll(paintings);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/paintings")
