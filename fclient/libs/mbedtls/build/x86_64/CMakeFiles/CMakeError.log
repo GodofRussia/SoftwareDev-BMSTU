@@ -1,0 +1,15 @@
+Determining if the include file pthread.h exists failed with the following output:
+Change Dir: /home/ilya/AndroidStudioProjects/SoftwareDev-BMSTU/fclient/libs/mbedtls/build/x86_64/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_7b718/fast && /usr/bin/make  -f CMakeFiles/cmTC_7b718.dir/build.make CMakeFiles/cmTC_7b718.dir/build
+make[1]: Entering directory '/home/ilya/AndroidStudioProjects/SoftwareDev-BMSTU/fclient/libs/mbedtls/build/x86_64/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7b718.dir/CheckIncludeFile.c.o
+/home/ilya/Android/Sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --target=x86_64-none-linux-android21 --sysroot=/home/ilya/Android/Sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/sysroot   -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -march=armv8-a+crypto -Wall -Wextra -Wwrite-strings -Wpointer-arith -Wimplicit-fallthrough -Wshadow -Wvla -Wformat=2 -Wno-format-nonliteral -Werror  -fPIE -MD -MT CMakeFiles/cmTC_7b718.dir/CheckIncludeFile.c.o -MF CMakeFiles/cmTC_7b718.dir/CheckIncludeFile.c.o.d -o CMakeFiles/cmTC_7b718.dir/CheckIncludeFile.c.o -c /home/ilya/AndroidStudioProjects/SoftwareDev-BMSTU/fclient/libs/mbedtls/build/x86_64/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+error: unknown target CPU 'armv8-a+crypto'
+note: valid target CPU values are: nocona, core2, penryn, bonnell, atom, silvermont, slm, goldmont, goldmont-plus, tremont, nehalem, corei7, westmere, sandybridge, corei7-avx, ivybridge, core-avx-i, haswell, core-avx2, broadwell, skylake, skylake-avx512, skx, cascadelake, cooperlake, cannonlake, icelake-client, rocketlake, icelake-server, tigerlake, sapphirerapids, alderlake, knl, knm, k8, athlon64, athlon-fx, opteron, k8-sse3, athlon64-sse3, opteron-sse3, amdfam10, barcelona, btver1, btver2, bdver1, bdver2, bdver3, bdver4, znver1, znver2, znver3, x86-64, x86-64-v2, x86-64-v3, x86-64-v4
+make[1]: *** [CMakeFiles/cmTC_7b718.dir/build.make:79: CMakeFiles/cmTC_7b718.dir/CheckIncludeFile.c.o] Error 1
+make[1]: Leaving directory '/home/ilya/AndroidStudioProjects/SoftwareDev-BMSTU/fclient/libs/mbedtls/build/x86_64/CMakeFiles/CMakeTmp'
+make: *** [Makefile:127: cmTC_7b718/fast] Error 2
+
+
+

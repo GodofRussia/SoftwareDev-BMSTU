@@ -12,6 +12,9 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        sourceSets.main {
+            jni.srcDirs = []
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -20,7 +23,7 @@ android {
             }
         }
         ndk {
-            abiFilters "arm64-v8a", "armeabi-v7a", "x86_64", "x86"
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86"
         }
     }
 
@@ -55,4 +58,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'org.apache.commons:commons-io:1.3.2'
 }
